@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useIndexedDB } from "react-indexed-db";
 import AddDataBtn from "../AddDataBtnComponent/AddDataBtn";
-import { INITIALDATA, DeleteErrorMsg } from "../../Constants/Constant";
+import { DeleteErrorMsg } from "../../Constants/Constant";
 import DataTableComp from "../DataTableComponent/DataTableComp";
 import AddUpdateDataForm from "../AddUpdateDataFormComponet/AddUpdateDataForm";
 
@@ -12,7 +12,7 @@ function DataContainer() {
   const [locationData, setLocationData] = useState([]);
   const { getAll, deleteRecord } = useIndexedDB("locations");
   const [showAddUpdateForm, setShowAddUpdateForm] = useState(false);
-  const [initialFormData, setInitialFormData] = useState(INITIALDATA);
+  const [initialFormData, setInitialFormData] = useState("");
 
   useEffect(() => {
     getLocationData();
@@ -67,12 +67,11 @@ function DataContainer() {
   return (
     <>
       <AddDataBtn showAddUpdateForm={() => setShowAddUpdateForm(true)} />
-
       <AddUpdateDataForm
         formData={initialFormData}
         showAddUpdateForm={showAddUpdateForm}
         updateFacilityFormData={updateFacilityFormData}
-        initialData={() => setInitialFormData(INITIALDATA)}
+        initialData={() => setInitialFormData("")}
         hideAddUpdateForm={() => setShowAddUpdateForm(false)}
       />
       <DataTableComp
