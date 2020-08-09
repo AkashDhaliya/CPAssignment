@@ -2,7 +2,6 @@ import React from "react";
 import NoData from "../NoDataComponent/NoData";
 import DataTable from "react-data-table-component";
 import { FaTrashAlt, FaPencilAlt } from "react-icons/fa";
-import formatStringByPattern from "format-string-by-pattern";
 import ErrorMessage from "../ErrrorMessageComponent/ErrorMessage";
 import { customStyles, GetErrorMSG } from "../../Constants/Constant";
 import LoadingSpinner from "../LoadingSpinnerComponent/LoadingSpinner";

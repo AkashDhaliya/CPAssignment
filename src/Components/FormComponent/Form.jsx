@@ -12,7 +12,6 @@ class Form extends Component {
     super(props);
     const state = {};
     this.timeout = 0;
-    //Here initial state has been setting dynamically from constants
     for (let i = 0; i < formFields.length; i++) {
       state[formFields[i].fieldId] = {
         value: "",
@@ -22,8 +21,50 @@ class Form extends Component {
     this.state = state;
   }
 
+  static getDerivedStateFromProps(nextProps, prevState) {
+    const {
+      firstName,
+      lastName,
+      address,
+      country,
+      pinCode,
+    } = nextProps.initialData;
+
+    if (
+      firstName.value !== "" &&
+      lastName.value !== "" &&
+      address.value !== "" &&
+      country.value !== "" &&
+      pinCode.value !== "" &&
+      prevState.firstName.value === "" &&
+      prevState.lastName.value === "" &&
+      prevState.address.value === "" &&
+      prevState.country.value === "" &&
+      prevState.pinCode.value === ""
+    ) {
+      return nextProps.initialData;
+    }
+    return null;
+  }
+
+  cancelHandler = (event) => {
+    this.props.hideAddUpdateForm();
+    event.preventDefault();
+
+    this.props.resetData();
+    let state = {};
+    this.timeout = 0;
+    for (let i = 0; i < formFields.length; i++) {
+      state[formFields[i].fieldId] = {
+        value: "",
+        errorState: { error: false, message: "" },
+      };
+    }
+    this.setState(state)
+  };
+
   submitHandler = (event) => {
-    this.props.addData(this.state);
+    this.props.addUpdateData(this.state);
     event.preventDefault();
   };
 
@@ -259,7 +300,7 @@ class Form extends Component {
           <button
             className="cnclBtn"
             type="button"
-            onClick={() => this.props.hideAddUpdateForm()}
+            onClick={this.cancelHandler}
           >
             Cancel
           </button>
