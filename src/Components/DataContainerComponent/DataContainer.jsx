@@ -1,7 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { useIndexedDB } from "react-indexed-db";
 import AddDataBtn from "../AddDataBtnComponent/AddDataBtn";
-import { DeleteErrorMsg } from "../../Constants/Constant";
+import {
+  AddErrorMsg,
+  UpdateErrorMsg,
+  DeleteErrorMsg,
+} from "../../Constants/Constant";
 import DataTableComp from "../DataTableComponent/DataTableComp";
 import Form from "../FormComponent/Form";
 
@@ -9,32 +13,30 @@ function DataContainer() {
   const [, setErrorCatch] = useState(null);
   const [isError, setisError] = useState(false);
   const [isResponse, setIsResponse] = useState(false);
-  const [locationData, setLocationData] = useState([]);
-  const { getAll, deleteRecord } = useIndexedDB("cpData");
+  const [tabledata, setTableData] = useState([]);
+  const { add, getAll, deleteRecord } = useIndexedDB("cpData");
   const [showAddUpdateForm, setShowAddUpdateForm] = useState(false);
   const [initialFormData, setInitialFormData] = useState("");
 
   useEffect(() => {
-    getLocationData();
+    getTableData();
   }, []);
 
-  function updateLocationData(row) {
+  function updateTableData(row) {
     setInitialFormData(row);
     setShowAddUpdateForm(true);
   }
 
-  function getLocationData() {
+  function getTableData() {
     getAll().then(
-      (locationData) => {
-        locationData.forEach((locationData, index) => {
-          locationData.serial = index + 1;
-        });
-        setLocationData(locationData);
+      (data) => {
+        
+        setTableData(data);
         setIsResponse(true);
         setisError(false);
       },
       (error) => {
-        setLocationData([]);
+        setTableData([]);
         setIsResponse(true);
         setisError(true);
         setErrorCatch(() => {
@@ -44,13 +46,30 @@ function DataContainer() {
     );
   }
 
-  function deleteLocationData(row) {
+  function addData(resp) {
+    let keys = Object.keys(resp);
+    let data = {};
+    keys.forEach((item) => {
+      data[item] = resp[item]["value"];
+    });
+    add(data).then(
+      (event) => {
+        console.log("ID Generated: ", event);
+      },
+      (error) => {
+        window.alert(AddErrorMsg);
+      }
+    );
+    setShowAddUpdateForm(false);
+  }
+
+  function deleteTableData(row) {
     if (
-      window.confirm(`Are you sure you want to delete:\r ${row.locationName}?`)
+      window.confirm(`Are you sure you want to delete:\r ${row.firstName} ${row.lastName}?`)
     ) {
       deleteRecord(row.id).then(
         (event) => {
-          getLocationData();
+          getTableData();
         },
         (error) => {
           window.alert(DeleteErrorMsg);
@@ -62,13 +81,17 @@ function DataContainer() {
   return (
     <>
       <AddDataBtn showAddUpdateForm={() => setShowAddUpdateForm(true)} />
-      <Form modal={showAddUpdateForm} hideAddUpdateForm={() => setShowAddUpdateForm(false)} />
+      <Form
+        modal={showAddUpdateForm}
+        hideAddUpdateForm={() => setShowAddUpdateForm(false)}
+        addData={addData}
+      />
       <DataTableComp
         isError={isError}
         isResponse={isResponse}
-        locationData={locationData}
-        delete={deleteLocationData}
-        update={updateLocationData}
+        tabledata={tabledata}
+        delete={deleteTableData}
+        update={updateTableData}
         showAddUpdateForm={showAddUpdateForm}
         hideAddUpdateForm={() => setShowAddUpdateForm(false)}
       />

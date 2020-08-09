@@ -22,6 +22,11 @@ class Form extends Component {
     this.state = state;
   }
 
+  submitHandler = (event) => {
+    this.props.addData(this.state);
+    event.preventDefault();
+  };
+
   handleChange = (evt) => {
     let field = evt.target.name;
     let value = evt.target.value;
@@ -41,7 +46,7 @@ class Form extends Component {
             this.state.pinCode.value,
             this.state.country.value
           );
-        }, 1000);
+        }, 1500);
       }
       this.setState((prevState) => ({
         [field]: {
@@ -74,19 +79,22 @@ class Form extends Component {
           errroMessage = "";
           break;
       }
-
-      this.setState((prevState) => ({
-        [field]: {
-          ...prevState[field],
-          errorState: {
-            ...prevState[field].errorState,
-            error: true,
-            message: errroMessage,
-          },
-        },
-      }));
+      this.setErrorState(field, errroMessage);
     }
   };
+
+  setErrorState(field, errorMsg) {
+    this.setState((prevState) => ({
+      [field]: {
+        ...prevState[field],
+        errorState: {
+          ...prevState[field].errorState,
+          error: true,
+          message: errorMsg,
+        },
+      },
+    }));
+  }
 
   detectInputValidation(evt) {
     const regex = new RegExp(evt.target.attributes.regex.value);
@@ -102,17 +110,47 @@ class Form extends Component {
     )
       .then((res) => res.json())
       .then(
-        (result) => {
-          this.setState({
-            isLoaded: true,
-            items: result.items,
-          });
+        (data) => {
+          if (data.result.length > 0) {
+            this.setState((prevState) => ({
+              pinCode: {
+                ...prevState["pinCode"],
+                errorState: {
+                  ...prevState["state"].errorState,
+                  error: false,
+                  message: "",
+                },
+              },
+            }));
+            this.setState((prevState) => ({
+              state: {
+                ...prevState["state"],
+                value: data.result[0].state,
+                errorState: {
+                  ...prevState["state"].errorState,
+                  error: false,
+                  message: "",
+                },
+              },
+            }));
+          } else {
+            this.setState((prevState) => ({
+              state: {
+                ...prevState["state"],
+                value: "",
+              },
+            }));
+            this.setErrorState(
+              "pinCode",
+              "Invalid pin code. Please enter a valid pincode."
+            );
+          }
         },
         (error) => {
-          this.setState({
-            isLoaded: true,
-            error,
-          });
+          this.setErrorState(
+            "pinCode",
+            "Error while retrieving state for this pin code"
+          );
         }
       );
   }
@@ -225,7 +263,9 @@ class Form extends Component {
           >
             Cancel
           </button>
-          <button type="submit">Submit</button>
+          <button type="submit" onClick={this.submitHandler}>
+            Submit
+          </button>
         </div>
       </form>
     );

@@ -10,22 +10,34 @@ import LoadingSpinner from "../LoadingSpinnerComponent/LoadingSpinner";
 function DataTableComp(props) {
   const columns = [
     {
-      name: "Location Name",
-      selector: "locationName",
+      name: "First Name",
+      selector: "firstName",
+      sortable: true,
+    },
+    {
+      name: "Last Name",
+      selector: "lastName",
       sortable: true,
     },
     {
       name: "Address",
-      selector: "addressLine1",
+      selector: "address",
       sortable: true,
     },
     {
-      name: "Phone No.",
-      selector: "phoneNo",
+      name: "State",
+      selector: "state",
       sortable: true,
-      cell: (row) => (
-        <div>{formatStringByPattern("(999) 999-9999", row.phoneNo)}</div>
-      ),
+    },
+    {
+      name: "Pin Code",
+      selector: "pinCode",
+      sortable: true,
+    },
+    {
+      name: "Country",
+      selector: "country",
+      sortable: true,
     },
     {
       cell: (row) => (
@@ -46,9 +58,9 @@ function DataTableComp(props) {
 
   const paginationOptions = { rowsPerPageText: "Items per page" };
 
-  const { locationData, isResponse, isError } = props;
+  const { tabledata, isResponse, isError } = props;
   if (isResponse && !isError) {
-    return locationData.length !== 0 ? (
+    return tabledata.length !== 0 ? (
       <section className="locationSection content">
         <DataTable
           columns={columns}
@@ -61,7 +73,7 @@ function DataTableComp(props) {
           customStyles={customStyles}
           theme="solarized"
           defaultSortField={"serial"}
-          data={locationData}
+          data={tabledata}
         />
       </section>
     ) : (
