@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useIndexedDB } from "react-indexed-db";
 import AddDataBtn from "../AddDataBtnComponent/AddDataBtn";
 import { formFields } from "../../Utility/formFields";
+import { useSelector, useDispatch } from "react-redux";
 
 import {
   AddErrorMsg,
@@ -28,9 +29,12 @@ function DataContainer() {
   const [showAddUpdateForm, setShowAddUpdateForm] = useState(false);
   const [initialFormData, setInitialFormData] = useState(initialState);
 
+  const contextData = useSelector((state) => state);
+  const dispatch = useDispatch();
+
   useEffect(() => {
     getTableData();
-  }, []);
+  }, [contextData.refreshTable]);
 
   function resetData() {
     let initialState = {};
@@ -62,6 +66,10 @@ function DataContainer() {
         setTableData(data);
         setIsResponse(true);
         setisError(false);
+        dispatch({
+          type: "REFRESH_DATA",
+          payload:false
+        });
       },
       (error) => {
         setTableData([]);
@@ -94,6 +102,10 @@ function DataContainer() {
     mode(data).then(
       (event) => {
         console.log("ID Generated: ", event);
+        dispatch({
+          type: "REFRESH_DATA",
+          payload:true
+        });
       },
       (error) => {
         window.alert(data.id === undefined ? AddErrorMsg : UpdateErrorMsg);
@@ -133,6 +145,7 @@ function DataContainer() {
         isError={isError}
         isResponse={isResponse}
         tabledata={tabledata}
+        contextData={contextData}
         delete={deleteTableData}
         update={updateTableData}
         showAddUpdateForm={() => setShowAddUpdateForm(true)}
