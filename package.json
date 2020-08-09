@@ -1,6 +1,6 @@
 {
+  "homepage": "https://akashdhaliya.github.io/cp-assignment/",
   "name": "cp_assignment",
-  "homepage": "https://akashdhaliya.github.io/movie-search-app/",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
