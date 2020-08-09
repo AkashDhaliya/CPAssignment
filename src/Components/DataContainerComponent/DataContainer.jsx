@@ -32,7 +32,6 @@ function DataContainer() {
     getTableData();
   }, []);
 
-
   function resetData() {
     let initialState = {};
     for (let i = 0; i < formFields.length; i++) {
@@ -79,8 +78,16 @@ function DataContainer() {
     let keys = Object.keys(resp);
     let data = {};
     keys.forEach((item) => {
-      data[item] = resp[item]["value"];
+      data[item] =
+        item === "id"
+          ? resp[item]["value"] === "" || resp[item]["value"] === undefined
+            ? ""
+            : resp[item]["value"]
+          : resp[item]["value"];
     });
+    if (data.id === "") {
+      delete data.id;
+    }
     let mode = data.id === undefined ? add : update;
     mode(data).then(
       (event) => {
@@ -118,7 +125,7 @@ function DataContainer() {
         hideAddUpdateForm={() => setShowAddUpdateForm(false)}
         addUpdateData={addUpdateData}
         initialData={initialFormData}
-        resetData = {resetData}
+        resetData={resetData}
       />
       <DataTableComp
         isError={isError}

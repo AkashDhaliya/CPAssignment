@@ -50,7 +50,6 @@ class Form extends Component {
   cancelHandler = (event) => {
     this.props.hideAddUpdateForm();
     event.preventDefault();
-
     this.props.resetData();
     let state = {};
     this.timeout = 0;
@@ -60,7 +59,11 @@ class Form extends Component {
         errorState: { error: false, message: "" },
       };
     }
-    this.setState(state)
+    state["id"] = {
+      value: "",
+      errorState: { error: false, message: "" },
+    };
+    this.setState(state);
   };
 
   submitHandler = (event) => {
