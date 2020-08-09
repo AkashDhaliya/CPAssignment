@@ -78,12 +78,14 @@ function DataContainer() {
     let keys = Object.keys(resp);
     let data = {};
     keys.forEach((item) => {
-      data[item] =
-        item === "id"
-          ? resp[item]["value"] === "" || resp[item]["value"] === undefined
-            ? ""
-            : resp[item]["value"]
-          : resp[item]["value"];
+      if (item !== "Error") {
+        data[item] =
+          item === "id"
+            ? resp[item]["value"] === "" || resp[item]["value"] === undefined
+              ? ""
+              : resp[item]["value"]
+            : resp[item]["value"];
+      }
     });
     if (data.id === "") {
       delete data.id;

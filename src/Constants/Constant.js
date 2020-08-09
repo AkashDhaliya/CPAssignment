@@ -4,7 +4,7 @@ export const AddErrorMsg = "Error while adding data, Please try again!";
 export const UpdateErrorMsg = "Error while updating data, Please try again!";
 export const DeleteErrorMsg = "Error while deleting data, Please try again!";
 
-export const NameErrorMsg = "Only characters allowed from A-Z";
+export const NameErrorMsg = "Only characters are allowed from A-Z";
 export const SpecialCharErrorMsg =
   "Special Characters are not allowed excluding  [ - and . ]";
 export const PinCodeErrorMsg = "Only number allowed";

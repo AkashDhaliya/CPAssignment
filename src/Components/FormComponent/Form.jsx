@@ -63,12 +63,38 @@ class Form extends Component {
       value: "",
       errorState: { error: false, message: "" },
     };
+    this.setState({Error:false})
     this.setState(state);
   };
 
   submitHandler = (event) => {
-    this.props.addUpdateData(this.state);
-    event.preventDefault();
+    const {
+      firstName,
+      lastName,
+      address,
+      country,
+      pinCode,
+      state,
+    } = this.state;
+
+    if (
+      firstName.value === "" ||
+      lastName.value === "" ||
+      address.value === "" ||
+      country.value === "" ||
+      pinCode.value === "" ||
+      state.value === ""
+    ) {
+      this.Error = true;
+      this.setState({Error:true})
+      event.preventDefault();
+      setTimeout(() => {
+        this.setState({Error:false})
+      }, 3000);
+    } else {
+      this.props.addUpdateData(this.state);
+      event.preventDefault();
+    }
   };
 
   handleChange = (evt) => {
@@ -138,6 +164,18 @@ class Form extends Component {
         },
       },
     }));
+    setTimeout(() => {
+      this.setState((prevState) => ({
+        [field]: {
+          ...prevState[field],
+          errorState: {
+            ...prevState[field].errorState,
+            error: false,
+            message: "",
+          },
+        },
+      }));
+    }, 3000);
   }
 
   detectInputValidation(evt) {
@@ -311,6 +349,7 @@ class Form extends Component {
             Submit
           </button>
         </div>
+        {this.state.Error && <div className="errorMsg requiredError">Required fields are missing**</div>}
       </form>
     );
   }
