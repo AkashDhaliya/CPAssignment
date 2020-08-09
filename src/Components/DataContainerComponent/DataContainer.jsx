@@ -68,7 +68,7 @@ function DataContainer() {
         setisError(false);
         dispatch({
           type: "REFRESH_DATA",
-          payload:false
+          payload: false,
         });
       },
       (error) => {
@@ -104,7 +104,7 @@ function DataContainer() {
         console.log("ID Generated: ", event);
         dispatch({
           type: "REFRESH_DATA",
-          payload:true
+          payload: true,
         });
       },
       (error) => {

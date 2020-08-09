@@ -50,9 +50,12 @@ class Form extends Component {
   cancelHandler = (event) => {
     this.props.hideAddUpdateForm();
     event.preventDefault();
+    this.resetData();
+  };
+
+  resetData = () => {
     this.props.resetData();
     let state = {};
-    this.timeout = 0;
     for (let i = 0; i < formFields.length; i++) {
       state[formFields[i].fieldId] = {
         value: "",
@@ -63,7 +66,7 @@ class Form extends Component {
       value: "",
       errorState: { error: false, message: "" },
     };
-    this.setState({Error:false})
+    this.setState({ Error: false });
     this.setState(state);
   };
 
@@ -86,14 +89,15 @@ class Form extends Component {
       state.value === ""
     ) {
       this.Error = true;
-      this.setState({Error:true})
+      this.setState({ Error: true });
       event.preventDefault();
       setTimeout(() => {
-        this.setState({Error:false})
+        this.setState({ Error: false });
       }, 3000);
     } else {
       this.props.addUpdateData(this.state);
       event.preventDefault();
+      this.resetData();
     }
   };
 
@@ -349,7 +353,11 @@ class Form extends Component {
             Submit
           </button>
         </div>
-        {this.state.Error && <div className="errorMsg requiredError">Required fields are missing**</div>}
+        {this.state.Error && (
+          <div className="errorMsg requiredError">
+            Required fields are missing**
+          </div>
+        )}
       </form>
     );
   }
