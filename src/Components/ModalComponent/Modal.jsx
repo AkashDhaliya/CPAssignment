@@ -6,7 +6,7 @@ const Modal =  (WrappedComponent) => {
       return (
         <div className={this.props.modal ? "modal show-modal" : "modal"}>
           <div className="modal-content">
-            <WrappedComponent />
+            <WrappedComponent {...this.props} />
           </div>
         </div>
       );

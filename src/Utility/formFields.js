@@ -5,7 +5,8 @@ export const formFields = [
     fieldType: "text",
     fieldRequired: true,
     fieldRegEx: "^[a-zA-Z]+$",
-    readOnly:false
+    readOnly:false,
+    maxLength:20
   },
   {
     fieldName: "Last Name",
@@ -13,22 +14,24 @@ export const formFields = [
     fieldType: "text",
     fieldRequired: true,
     fieldRegEx: "^[a-zA-Z]+$",
-    readOnly:false
+    readOnly:false,
+    maxLength:20
   },
   {
     fieldName: "Address",
-    fieldId: "suiteNo",
+    fieldId: "address",
     fieldType: "textArea",
     fieldRequired: true,
     fieldRegEx: "^[a-zA-Z0-9, .]+$",
-    readOnly:false
+    readOnly:false,
+    maxLength:140
   },
   {
     fieldName: "Country",
     fieldId: "country",
     fieldType: "select",
     fieldRequired: true,
-    filedOptions: ["US", "UK", "CA", "NZ", "AU"],
+    fieldOptions: ["US", "UK", "CA", "NZ", "AU" , "IN"],
     fieldRegEx: "",
     readOnly:false
   },
@@ -38,7 +41,8 @@ export const formFields = [
     fieldType: "text",
     fieldRequired: true,
     fieldRegEx: "^[0-9]+$",
-    readOnly:false
+    readOnly:false,
+    maxLength:6
   },
   {
     fieldName: "State",

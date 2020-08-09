@@ -3,25 +3,20 @@ import { useIndexedDB } from "react-indexed-db";
 import AddDataBtn from "../AddDataBtnComponent/AddDataBtn";
 import { DeleteErrorMsg } from "../../Constants/Constant";
 import DataTableComp from "../DataTableComponent/DataTableComp";
-import AddUpdateDataForm from "../AddUpdateDataFormComponet/AddUpdateDataForm";
+import Form from "../FormComponent/Form";
 
 function DataContainer() {
   const [, setErrorCatch] = useState(null);
   const [isError, setisError] = useState(false);
   const [isResponse, setIsResponse] = useState(false);
   const [locationData, setLocationData] = useState([]);
-  const { getAll, deleteRecord } = useIndexedDB("locations");
+  const { getAll, deleteRecord } = useIndexedDB("cpData");
   const [showAddUpdateForm, setShowAddUpdateForm] = useState(false);
   const [initialFormData, setInitialFormData] = useState("");
 
   useEffect(() => {
     getLocationData();
   }, []);
-
-  function updateFacilityFormData(formData, facilityData) {
-    formData.facilityTimes = facilityData;
-    setInitialFormData(formData);
-  }
 
   function updateLocationData(row) {
     setInitialFormData(row);
@@ -67,13 +62,7 @@ function DataContainer() {
   return (
     <>
       <AddDataBtn showAddUpdateForm={() => setShowAddUpdateForm(true)} />
-      <AddUpdateDataForm
-        formData={initialFormData}
-        showAddUpdateForm={showAddUpdateForm}
-        updateFacilityFormData={updateFacilityFormData}
-        initialData={() => setInitialFormData("")}
-        hideAddUpdateForm={() => setShowAddUpdateForm(false)}
-      />
+      <Form modal={showAddUpdateForm} hideAddUpdateForm={() => setShowAddUpdateForm(false)} />
       <DataTableComp
         isError={isError}
         isResponse={isResponse}

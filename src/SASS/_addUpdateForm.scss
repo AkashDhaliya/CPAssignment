@@ -28,7 +28,7 @@
     text-align: start;
   }
   div {
-    margin: 20px 0px;
+    margin: 12px 0px;
   }
 }
 
@@ -44,10 +44,6 @@ label {
   color: $labelColor;
   font-size: 14px;
   margin: 2px 0px;
-}
-
-label[for="locationName"] {
-  color: rgb(57, 161, 190);
 }
 
 label[required] {
@@ -107,16 +103,7 @@ form > div {
   display: table;
 }
 
-.customeTagsParent {
-  font-size: 10px;
-  display: table;
-}
-
-.customeTags {
-  background: #2a5f8d;
-  display: inline-block;
-  padding: 5px 5px;
-  border-radius: 4px;
-  margin: 5px 5px 0 0;
-  color: $white;
+textarea {
+  resize: none;
+  outline:none;
 }

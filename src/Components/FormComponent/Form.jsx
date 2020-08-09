@@ -1,18 +1,17 @@
-import React, { PureComponent } from "react";
+import React, { Component } from "react";
 import Modal from "../ModalComponent/Modal";
-import { formFields } from "../../Utility/formData";
-
+import { formFields } from "../../Utility/formFields";
 import {
+  NameErrorMsg,
   SpecialCharErrorMsg,
-  PhoneNoErrorMsg,
-  ZipCodeErrorMsg,
-  CityErrorMsg,
+  PinCodeErrorMsg,
 } from "../../Constants/Constant";
 
-class Form extends PureComponent {
+class Form extends Component {
   constructor(props) {
     super(props);
     const state = {};
+    this.timeout = 0;
     //Here initial state has been setting dynamically from constants
     for (let i = 0; i < formFields.length; i++) {
       state[formFields[i].fieldId] = {
@@ -26,8 +25,24 @@ class Form extends PureComponent {
   handleChange = (evt) => {
     let field = evt.target.name;
     let value = evt.target.value;
-    let validate = value.length === 0 ? true : this.detectInputValidation(evt);
+    let validate =
+      value.length === 0 || evt.target.name === "country"
+        ? true
+        : this.detectInputValidation(evt);
     if (validate) {
+      if (
+        (field === "pinCode" || field === "country") &&
+        this.state.country.value.length !== 0 &&
+        this.state.pinCode.value.length > 3
+      ) {
+        if (this.timeout) clearTimeout(this.timeout);
+        this.timeout = setTimeout(() => {
+          this.getPincodeState(
+            this.state.pinCode.value,
+            this.state.country.value
+          );
+        }, 1000);
+      }
       this.setState((prevState) => ({
         [field]: {
           ...prevState[field],
@@ -42,37 +57,35 @@ class Form extends PureComponent {
     } else {
       var errroMessage;
       switch (evt.target.name) {
-        case "locationName":
+        case "firstName":
+          errroMessage = NameErrorMsg;
+          break;
+        case "lastName":
+          errroMessage = NameErrorMsg;
+          break;
+        case "address":
           errroMessage = SpecialCharErrorMsg;
           break;
-        case "addressLine1":
-          errroMessage = SpecialCharErrorMsg;
-          break;
-        case "phoneNo":
-          errroMessage = PhoneNoErrorMsg;
-          break;
-        case "zipCode":
-          errroMessage = ZipCodeErrorMsg;
-          break;
-        case "city":
-          errroMessage = CityErrorMsg;
+        case "pinCode":
+          errroMessage = PinCodeErrorMsg;
           break;
 
         default:
           errroMessage = "";
           break;
       }
-    }
-    this.setState((prevState) => ({
-      [field]: {
-        ...prevState[field],
-        errorState: {
-          ...prevState[field].errorState,
-          error: true,
-          message: errroMessage,
+
+      this.setState((prevState) => ({
+        [field]: {
+          ...prevState[field],
+          errorState: {
+            ...prevState[field].errorState,
+            error: true,
+            message: errroMessage,
+          },
         },
-      },
-    }));
+      }));
+    }
   };
 
   detectInputValidation(evt) {
@@ -81,6 +94,27 @@ class Form extends PureComponent {
       return true;
     }
     return false;
+  }
+
+  getPincodeState(pin, country) {
+    fetch(
+      `https://api.worldpostallocations.com/pincode?postalcode=${pin}&countrycode=${country}`
+    )
+      .then((res) => res.json())
+      .then(
+        (result) => {
+          this.setState({
+            isLoaded: true,
+            items: result.items,
+          });
+        },
+        (error) => {
+          this.setState({
+            isLoaded: true,
+            error,
+          });
+        }
+      );
   }
 
   render() {
@@ -94,6 +128,8 @@ class Form extends PureComponent {
             fieldRequired,
             fieldOptions,
             fieldRegEx,
+            readOnly,
+            maxLength,
           } = formFields;
           const { errorState } = this.state[fieldId];
           switch (fieldType) {
@@ -103,7 +139,7 @@ class Form extends PureComponent {
                   <label
                     htmlFor={fieldId}
                     required={fieldRequired}
-                    className="addUpdateLocationLabel"
+                    className="addUpdateDataLabel"
                   >
                     {fieldName}
                   </label>
@@ -111,11 +147,41 @@ class Form extends PureComponent {
                     type="text"
                     name={fieldId}
                     autoComplete="off"
+                    readOnly={readOnly}
                     value={this.state[fieldId].value}
                     onChange={this.handleChange}
-                    className="addUpdateLocationInput"
+                    className="addUpdateDataInput"
                     regex={fieldRegEx}
+                    maxLength={maxLength}
                   ></input>
+                  {errorState.error && (
+                    <div className="errorMsg">{errorState.message}</div>
+                  )}
+                </div>
+              );
+
+            case "textArea":
+              return (
+                <div key={fieldId} className={fieldId}>
+                  <label
+                    htmlFor={fieldId}
+                    required={fieldRequired}
+                    className="addUpdateDataLabel"
+                  >
+                    {fieldName}
+                  </label>
+                  <textarea
+                    name={fieldId}
+                    autoComplete="off"
+                    readOnly={readOnly}
+                    value={this.state[fieldId].value}
+                    onChange={this.handleChange}
+                    className="addUpdateDataInput"
+                    regex={fieldRegEx}
+                    maxLength="140"
+                    cols="73"
+                    rows="3"
+                  ></textarea>
                   {errorState.error && (
                     <div className="errorMsg">{errorState.message}</div>
                   )}
@@ -125,7 +191,7 @@ class Form extends PureComponent {
               return (
                 <div key={fieldId} className={fieldId}>
                   <label
-                    className="addUpdateLocationLabel"
+                    className="addUpdateDataLabel"
                     required={fieldRequired}
                     htmlFor={fieldId}
                   >
@@ -134,10 +200,9 @@ class Form extends PureComponent {
                   <select
                     type="text"
                     name={fieldId}
-                    isrequired={fieldRequired}
                     value={this.state[fieldId].value}
                     onChange={this.handleChange}
-                    className="addUpdateLocationInput"
+                    className="addUpdateDataInput"
                   >
                     <option value="">Select</option>
                     {fieldOptions.map((item) => (
@@ -151,15 +216,16 @@ class Form extends PureComponent {
             default:
               return null;
           }
-          return null;
         })}
         <div className="actionBtn">
-          <button className="cnclBtn" type="button">
+          <button
+            className="cnclBtn"
+            type="button"
+            onClick={() => this.props.hideAddUpdateForm()}
+          >
             Cancel
           </button>
-          <button type="submit" disabled={true}>
-            Submit
-          </button>
+          <button type="submit">Submit</button>
         </div>
       </form>
     );

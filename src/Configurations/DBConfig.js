@@ -3,7 +3,7 @@ export const DBConfig = {
   version: 1,
   objectStoresMeta: [
     {
-      store: 'data',
+      store: 'cpData',
       storeConfig: { keyPath: 'id', autoIncrement: true },
       storeSchema: [
         { name: 'name', keypath: 'name', options: { unique: false } }

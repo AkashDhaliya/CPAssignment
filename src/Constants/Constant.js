@@ -4,11 +4,10 @@ export const AddErrorMsg = "Error while adding data, Please try again!";
 export const UpdateErrorMsg = "Error while updating data, Please try again!";
 export const DeleteErrorMsg = "Error while deleting data, Please try again!";
 
+export const NameErrorMsg = "Only characters allowed from A-Z";
 export const SpecialCharErrorMsg =
   "Special Characters are not allowed excluding  [ - and . ]";
-
-export const ZipCodeErrorMsg = "Only number allowed";
-export const CityErrorMsg = "Only characters allowed from A-Z";
+export const PinCodeErrorMsg = "Only number allowed";
 
 export const customStyles = {
   table: {
